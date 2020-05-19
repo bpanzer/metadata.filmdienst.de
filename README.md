@@ -66,21 +66,20 @@ Dazu matcht der Regex A auf eine Kritik, die den Link zur Langkritik enthält, u
 Extraktion der Darsteller  
 Die Darsteller werden auf der filmdiest.de-Seite so aufgelistet:  
 ```
-<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
-	<RegExp id="A" input="$$1" output="\1" dest="7">
-		<expression clear="yes">&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;div class=&quot;critique-button&quot;&gt;.*?&lt;a class=&quot;btn btn-lg btn-default text-uppercase&quot; href=&quot;#kritik&quot;&gt;.*?Zur Langkritik.*?&lt;/a&gt;.*?&lt;/div&gt;</expression>
-	</RegExp>
-	<RegExp id="B" input="$$7" output="\1" dest="6">
-		<expression>(.+)</expression>
-	</RegExp>
-	<RegExp id="C" input="$$7" output="$$1" dest="8">
-		<expression>^$</expression>
-	</RegExp>
-	<RegExp id="D" input="$$8" output="\1" dest="6">
-		<expression>&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;/div&gt;</expression>
-	</RegExp>
-	<expression>(.+)</expression>
-</RegExp>
+<dt>Darsteller</dt>
+<dd>
+	<span class="credit ">
+		<a href="/person/filme/241391">
+            Lily Franky (Osamu Shibata)
+		</a> 
+	</span>
+	<span class="credit ">
+        &#183;
+		<a href="/person/filme/230534">
+            Sakura Ando (Nobuyo Shibata)
+		</a> 
+	</span>
+</dd>
 ```
 
 
