@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Kodi-Plug-in zum Holen der Filmdaten von Filmdienste.de.
+Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt, verteilt und verändert werden. 
+-->
+<scraper framework="1.1" date="2019-02-09">
+	<NfoUrl>
+		<RegExp input="$$1" output="&lt;details&gt;&lt;url&gt;&lt;/url&gt;&lt;id&gt;&lt;/id&gt;&lt;/details&gt;" dest="3">
+			<expression/><!-- missing! -->
+		</RegExp>
+	</NfoUrl>
+	<!-- Filmdienst-URL sieht so aus: 
+	https://www.filmdienst.de/suche/filme?searchText=angels%20share&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False 
+	mit Jahr:
+	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=1954&yearTo=1954&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False
+	aber das Jahr darf auch leer sein:
+	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=&yearTo=&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False
+	-->
+	<!--  dest="3" ist sowohl an CreateSearchUrl als auch an RegExp nötig! -->
+	<CreateSearchUrl dest="3">
+		<RegExp input="$$6" output="&lt;url&gt;http://www.filmdienst.de/suche/filme?searchText=\1&amp;yearFrom=$$2&amp;yearTo=$$2&amp;movieFormat=All&amp;rating=0&amp;order=NewFirst&amp;isFilterExpanded=False&lt;/url&gt;" dest="3">
+			<RegExp input="$$1" output="\1" dest="7">
+				<expression clear="yes">(.*?)\[.*?</expression>
+			</RegExp>
+			<RegExp input="$$7" output="\1" dest="6">
+				<expression>(.+)</expression>
+			</RegExp>
+			<RegExp input="$$7" output="$$1" dest="8">
+				<expression>^$</expression>
+			</RegExp>
+			<RegExp input="$$8" output="\1" dest="6">
+				<expression>(.+)</expression>
+			</RegExp>
+			<expression>(.+)</expression>
+		</RegExp>
+	</CreateSearchUrl>
+	<!-- dies zerlegt das Ergebnis in einzelne Treffer, also Filme -->
+	<!-- Filmdienst-URL ist so: https://www.filmdienst.de/film/details/540431/was-hier-steht-ist-auch-egal -->
+	<GetSearchResults dest="8">
+		<RegExp input="$$3" output="&lt;results&gt;\1&lt;/results&gt;" dest="8">
+			<RegExp input="$$1" output="&lt;entity&gt;&lt;title&gt;\3 von \5&lt;/title&gt;&lt;id&gt;\1&lt;/id&gt;&lt;year&gt;\4&lt;/year&gt;&lt;url&gt;http://www.filmdienst.de/film/details/\1/&lt;/url&gt;&lt;/entity&gt;" dest="3">
+				<expression repeat="yes" noclean="1">&lt;article class=&quot;col-sm-4 column element&quot;&gt;.*?&lt;h3 class=&quot;h4 header&quot;&gt;.*?&lt;a href=&quot;/film/details/([0-9]+)/([a-z\-0-9]+)&quot;&gt;(.*?)&lt;/a&gt;.*? ([1-2][0-9][0-9][0-9]).*? R: (.*?) &lt;br /&gt;</expression>
+			</RegExp>
+			<expression noclean="1" />
+		</RegExp>
+	</GetSearchResults>
+	<!-- 
+
+	<GetSearchResults>
+		<RegExp>
+			<expression/>
+		</RegExp>
+	</GetSearchResults>
+	-->
+	<GetDetails dest="3">
+		<RegExp input="$$5" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+			<RegExp input="$$1" output="&lt;title&gt;\1&lt;/title&gt;&lt;director&gt;\2&lt;/director&gt;" dest="5">
+				<expression noclean="1">&lt;h1 class=&quot;text-serif&quot;&gt;(.*?)&lt;/h1&gt;.*&lt;p&gt;Regie: (.*?)&lt;/p&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;id&gt;\1&lt;/id&gt;" dest="5+">
+				<expression noclean="1">&lt;meta property=&quot;og:url&quot; content=&quot;https://www.filmdienst.de/film/details/([0-9]+)/.*?&quot; /&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;title2&gt;\1&lt;/title2&gt;" dest="5+">
+				<expression noclean="1">&lt;h1 class=&quot;text-serif&quot;&gt;(.*)&lt;/h1&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;director2&gt;\1&lt;/director2&gt;" dest="5+">
+				<expression noclean="1">&lt;p&gt;Regie: (.*?)&lt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;director3&gt;\2&lt;/director3&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Regie&lt;/dt&gt;.*?&lt;dd&gt;.*?&lt;span class=&quot;credit &quot;&gt;.*?&lt;a href=&quot;/person/filme/([0-9]+)&quot;&gt;(.*?)&lt;/a&gt;</expression>
+			</RegExp>
+			<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
+				<RegExp input="$$1" output="\1" dest="7">
+					<expression clear="yes">&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;div class=&quot;critique-button&quot;&gt;.*?&lt;a class=&quot;btn btn-lg btn-default text-uppercase&quot; href=&quot;#kritik&quot;&gt;.*?Zur Langkritik.*?&lt;/a&gt;.*?&lt;/div&gt;</expression>
+				</RegExp>
+				<RegExp input="$$7" output="\1" dest="6">
+					<expression>(.+)</expression>
+				</RegExp>
+				<RegExp input="$$7" output="$$1" dest="8">
+					<expression>^$</expression>
+				</RegExp>
+				<RegExp input="$$8" output="\1" dest="6">
+					<expression>&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;/div&gt;</expression>
+				</RegExp>
+				<expression>(.+)</expression>
+			</RegExp>
+
+			<RegExp input="$$1" output="\1" dest="10">
+				<expression noclean="1">&lt;dt&gt;Darsteller&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$10" output="\1" dest="18">
+				<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/details/[0-9]+/[-a-z]+&quot;&gt;(.*?)&lt;/a&gt;.*?&lt;/span&gt;</expression>
+			</RegExp>
+			<!-- this is supposed to match a string without opening bracket (for an actor without role name); but it does not match.
+			<RegExp input="$$18" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;&lt;/role&gt;&lt;/actor&gt;" dest="5+">
+				<expression repeat="yes" noclean="1" trim="1">([^\(]+)</expression>
+			</RegExp>
+			-->
+			<RegExp input="$$18" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
+				<expression repeat="yes" noclean="1" trim="1">(.*?)\((.*?)\)</expression>
+			</RegExp>
+
+			<!--
+			<RegExp input="$$10" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
+				<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/filme/[0-9]+&quot;&gt;(.*?)\((.*?)\).*?&lt;/a&gt;.*?&lt;/span&gt;</expression>
+			</RegExp>
+			<RegExp input="$$14" output="&lt;genre&gt;\1&lt;/genre&gt;" dest="5+">
+				<RegExp input="$$1" output="\1" dest="11">
+					<expression noclean="1" clear="yes">&lt;dt&gt;Genre&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+				</RegExp>
+				<RegExp input="$$11" output="\1" dest="12">
+					<expression repeat="yes" clear="yes">(.*?) \| </expression>
+				</RegExp>
+				<RegExp input="$$12" output="\1" dest="14">
+					<expression>(.+)</expression>
+				</RegExp>
+				<RegExp input="$$12" output="$$1" dest="13">
+					<expression>^$</expression>
+				</RegExp>
+				<RegExp input="$$13" output="\1" dest="14">
+					<expression>(.+)</expression>
+				</RegExp>
+				<expression>(.+)</expression>
+			</RegExp>
+			-->
+			<RegExp input="$$1" output="\1" dest="11">
+				<expression>&lt;dt&gt;Genre&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$11" output="&lt;genre&gt;\1&lt;/genre&gt;" dest="5+">
+				<expression repeat="yes" trim="1">(.*?) \| </expression>
+			</RegExp>
+			<RegExp input="$$11" output="&lt;genre&gt;\1&lt;/genre&gt;" dest="5+">
+				<expression>(.*?)</expression>
+			</RegExp>
+
+			<RegExp input="$$1" output="&lt;runtime&gt;\1&lt;/runtime&gt;" dest="5+">
+				<expression noclean="1">([0-9]+) \([0-9]+ B\.\/sec\.\)\/[0-9]+ \([0-9]+ B\.\/sec\.\) Minuten</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;runtime&gt;\1&lt;/runtime&gt;" dest="5+">
+				<expression noclean="1">([0-9]+) \(.*? [0-9]+\) Minuten</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;runtime&gt;\1&lt;/runtime&gt;" dest="5+">
+				<expression noclean="1">([0-9]+) Minuten</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;country&gt;\1&lt;/country&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Produktionsland&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;year&gt;\1&lt;/year&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Produktionsjahr&lt;/dt&gt;.*?&lt;dd&gt;([1-2][0-9][0-9][0-9])&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;year&gt;19\2&lt;/year&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Produktionsjahr&lt;/dt&gt;.*?&lt;dd&gt;(19[0-9][0-9])\/([0-9][0-9])&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;year&gt;20\2&lt;/year&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Produktionsjahr&lt;/dt&gt;.*?&lt;dd&gt;(20[0-9][0-9])\/([0-9][0-9])&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;year&gt;2\2&lt;/year&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Produktionsjahr&lt;/dt&gt;.*?&lt;dd&gt;(19[0-9][0-9])\/(2[0-9][0-9][0-9])&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;originaltitle&gt;\1&lt;/originaltitle&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Originaltitel&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			<!--	auskommentiert, da Kodi keinen Text im rating-value akzeptiert
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;\1&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;1&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;dt class=&quot;credit hidden&quot;&gt;Bewertung&lt;/dt&gt;.*?&lt;dd class=&quot;credit hidden&quot;&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;\1&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;1&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;dt class=&quot;credit hidden&quot;&gt;Bewertung&lt;/dt&gt;.*?&lt;dd class=&quot;credit hidden&quot;&gt;(.*?)&lt;/dd&gt;</expression>
+			</RegExp>
+			-->
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;1&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;div class=&quot;star-rating text-primary&quot;&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;/div&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;2&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;div class=&quot;star-rating text-primary&quot;&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;/div&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;3&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;div class=&quot;star-rating text-primary&quot;&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;/div&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;4&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;div class=&quot;star-rating text-primary&quot;&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star-empty&quot;&gt;&lt;/span&gt;.*?&lt;/div&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;ratings&gt;&lt;rating name=&quot;filmdienst&quot; max=&quot;5&quot;&gt;&lt;value&gt;5&lt;/value&gt;&lt;/rating&gt;&lt;votes&gt;&lt;/votes&gt;&lt;/ratings&gt;" dest="5+">
+				<expression noclean="1">&lt;div class=&quot;star-rating text-primary&quot;&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;span class=&quot;glyphicon glyphicon-star&quot;&gt;&lt;/span&gt;.*?&lt;/div&gt;</expression>
+			</RegExp>
+			<!--
+			Kodi sends out HTTP HEAD requests for thumb pictures. 
+			However, filmdienst.de returns such an image for a HTTP GET but not for a HTTP HEAD request.
+			therefore the download depends on an http proxy which turns HTTP HEAD into HTTP GET requests.
+			-->
+			<RegExp input="$$1" output="&lt;thumb &gt;http://www.filmdienst.de/bild/filmdb/\1&lt;/thumb&gt;" dest="5+">
+				<expression noclean="1">&lt;img class=&quot;img-responsive&quot; .*?title=&quot;.*?&quot;.*?src=&quot;/bild/filmdb/([0-9]+)&quot; /&gt;</expression>
+			</RegExp>
+		<expression noclean="1" />
+		</RegExp>
+	</GetDetails>
+
+</scraper>

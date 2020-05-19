@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+Kodi-Plug-in zum Holen der Filmdaten von Filmdienste.de.
+Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt, verteilt und verändert werden. 
+-->
+<addon id="metadata.filmdienst.de"
+       name="Filmdienst.de"
+       version="0.1"
+       provider-name="Benedikt Panzer">
+  <requires>
+    <import addon="plugin.video.youtube" version="4.4.10" optional="true"/>
+  </requires>
+  <extension point="xbmc.metadata.scraper.movies"
+             language="de"
+             library="filmdienst.de.xml"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="af">Summary</summary>
+    <summary lang="be">Summary</summary>
+    <summary lang="bg">Summary</summary>
+    <summary lang="ca">Summary</summary>
+    <summary lang="cs">Summary</summary>
+    <summary lang="cy">Summary</summary>
+    <summary lang="da">Summary</summary>
+    <summary lang="de">FILMDIENST.de</summary>
+    <summary lang="el">Summary</summary>
+    <summary lang="en">FILMDIENST.de</summary>
+    <summary lang="en_NZ">Summary</summary>
+    <summary lang="en_US">Summary</summary>
+    <summary lang="es"></summary>
+    <summary lang="es_AR">Summary</summary>
+    <summary lang="es_MX">Summary</summary>
+    <summary lang="et">Summary</summary>
+    <summary lang="fi">Summary</summary>
+    <summary lang="fr">Summary</summary>
+    <summary lang="fr_CA">Summary</summary>
+    <summary lang="gl">Summary</summary>
+    <summary lang="he">Summary</summary>
+    <summary lang="hr">Summary</summary>
+    <summary lang="hu">Summary</summary>
+    <summary lang="id">Summary</summary>
+    <summary lang="is">Summary</summary>
+    <summary lang="it">Summary</summary>
+    <summary lang="ja">Summary</summary>
+    <summary lang="ko">Summary</summary>
+    <summary lang="lt">Summary</summary>
+    <summary lang="mk">Summary</summary>
+    <summary lang="ml">Summary</summary>
+    <summary lang="ms">Summary</summary>
+    <summary lang="my">Summary</summary>
+    <summary lang="nl">Summary</summary>
+    <summary lang="no">Summary</summary>
+    <summary lang="pl">Summary</summary>
+    <summary lang="pt">Summary</summary>
+    <summary lang="pt_BR">Summary</summary>
+    <summary lang="ro">Summary</summary>
+    <summary lang="ru">Summary</summary>
+    <summary lang="se">Summary</summary>
+    <summary lang="sk">Summary</summary>
+    <summary lang="sl">Summary</summary>
+    <summary lang="sv">Summary</summary>
+    <summary lang="ta_IN">Summary</summary>
+    <summary lang="th">Summary</summary>
+    <summary lang="tr">Summary</summary>
+    <summary lang="uk">Summary</summary>
+    <summary lang="vi">Summary</summary>
+    <summary lang="zh">Summary</summary>
+    <summary lang="zh_TW">Summary</summary>
+    <description lang="af">Description</description>
+    <description lang="be">Description</description>
+    <description lang="bg">Description</description>
+    <description lang="ca">Description</description>
+    <description lang="cs">Description</description>
+    <description lang="cy">Description</description>
+    <description lang="da">Description</description>
+    <description lang="de">Der FILMDIENST liefert Rezensionen zu allen deutschen Kinostarts seit 1947.</description>
+    <description lang="el">Description</description>
+    <description lang="en">Description</description>
+    <description lang="en_NZ">Description</description>
+    <description lang="en_US">Description</description>
+    <description lang="es">Description</description>
+    <description lang="es_AR">Description</description>
+    <description lang="es_MX">Description</description>
+    <description lang="et">Description</description>
+    <description lang="fi">Description</description>
+    <description lang="fr">Description</description>
+    <description lang="fr_CA">Description</description>
+    <description lang="gl">Description</description>
+    <description lang="he">Description</description>
+    <description lang="hr">Description</description>
+    <description lang="hu">Description</description>
+    <description lang="id">Description</description>
+    <description lang="is">Description</description>
+    <description lang="it">Description</description>
+    <description lang="ja">Description</description>
+    <description lang="ko">Description</description>
+    <description lang="lt">Description</description>
+    <description lang="mk">Description</description>
+    <description lang="ml">Description</description>
+    <description lang="ms">Description</description>
+    <description lang="nl">Description</description>
+    <description lang="no">Description</description>
+    <description lang="pl">Description</description>
+    <description lang="pt">Description</description>
+    <description lang="pt_BR">Description</description>
+    <description lang="ro">Description</description>
+    <description lang="ru">Description</description>
+    <description lang="se">Description</description>
+    <description lang="sk">Description</description>
+    <description lang="sl">Description</description>
+    <description lang="sv">Description</description>
+    <description lang="ta_IN">Description</description>
+    <description lang="th">Description</description>
+    <description lang="tr">Description</description>
+    <description lang="uk">Description</description>
+    <description lang="vi">Description</description>
+    <description lang="zh">Description</description>
+    <description lang="zh_TW">Description</description>
+    <platform>all</platform>
+    <license>GPL v2.0</license>
+    <forum></forum>
+    <website></website>
+    <email></email>
+    <source></source>
+  </extension>
+</addon>
