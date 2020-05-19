@@ -18,5 +18,7 @@ Settings → Library → Videos -> Kontextmenü des entsprechenden Verzeichnisse
 Falls dort bereits Filme liegen und mit einem anderen Add-on gescrapt wurden, muss man diese Daten vorher verwerfen, indem man dort „This directory contains“ einmal auf "None" setzt, Ok wählt und dann diese Einstellung wieder auf "Movies" setzt und den Scraper auswählt. 
 
 ## Einschränkungen und offene Punkte
+- Es wird nur der erste Eintrag vom Genre nach Kodi importiert. Ich bin daran gescheitert, den String per rekursivem RegEx zu parsen (siehe Code). Verbesserungen sind willkommen!
+- Filmdienst.de zeigt oft ein oder mehrere Fotos zu den Filmen. Allerdings sind es meist nicht die Plakate, daher importiere ich sie standardmäßig nicht. Außerdem fragt Kodi diese Bilder per HEAD-Abfrage an, worauf Filmdienst.de aber keine Bilder ausliefert. Ich habe testweise das kleine Script filmdienst.de-proxy.pl geschrieben, das die HEAD- in GET-Abfragen umwandelt. Wenn man das laufen lässt, es als HTTP-Proxy in Kodi konfiguriert und den RegEx für die Fotos einkommentiert kann so die Fotos von Filmdienst.de abholen.
 
 ## Entwicklung
