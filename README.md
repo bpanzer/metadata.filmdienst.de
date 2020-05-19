@@ -44,43 +44,53 @@ Reguläre Ausdrücke:
 If-then-else im Regex:  
 Folgendes Konstrukt realisiert eine if-then-else-Logik. Die ist hier nötig, weil Filmdienst bei den Filmen, zu denen eine Langkritik vorhanden ist, einen Link darauf am Ende der Kurzkritik einfügt. Dieser Link soll ggf. entfernt werden, also die reine Kurzkritik ausgegeben werden.  
 Dazu matcht der Regex A auf eine Kritik, die den Link zur Langkritik enthält, und leitet die Ausgabe an Regex B. Außerdem ist das clear=yes offenbar wichtig. Der Regex B matcht auf einen nicht-leeren String und leitet diesen ggf. an den umgebenden Regex zur Ausgabe. Falls der Regex B nicht matcht kommt Regex C zum Zuge, der auf einen leeren String matcht. Er leitet nochmal den Input, den Regex B erhalten hat, an den Regex D. Dieser matcht auf eine Kurzkritik (mit oder ohne Link) und leitet diese an den umgebenden Regex zur Ausgabe.  
-		<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
-			<RegExp id="A" input="$$1" output="\1" dest="7">
-				<expression clear="yes">&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;div class=&quot;critique-button&quot;&gt;.*?&lt;a class=&quot;btn btn-lg btn-default text-uppercase&quot; href=&quot;#kritik&quot;&gt;.*?Zur Langkritik.*?&lt;/a&gt;.*?&lt;/div&gt;</expression>
-			</RegExp>
-			<RegExp id="B" input="$$7" output="\1" dest="6">
-				<expression>(.+)</expression>
-			</RegExp>
-			<RegExp id="C" input="$$7" output="$$1" dest="8">
-				<expression>^$</expression>
-			</RegExp>
-			<RegExp id="D" input="$$8" output="\1" dest="6">
-				<expression>&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;/div&gt;</expression>
-			</RegExp>
-			<expression>(.+)</expression>
-		</RegExp>
+```
+<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
+	<RegExp id="A" input="$$1" output="\1" dest="7">
+		<expression clear="yes">&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;div class=&quot;critique-button&quot;&gt;.*?&lt;a class=&quot;btn btn-lg btn-default text-uppercase&quot; href=&quot;#kritik&quot;&gt;.*?Zur Langkritik.*?&lt;/a&gt;.*?&lt;/div&gt;</expression>
+	</RegExp>
+	<RegExp id="B" input="$$7" output="\1" dest="6">
+		<expression>(.+)</expression>
+	</RegExp>
+	<RegExp id="C" input="$$7" output="$$1" dest="8">
+		<expression>^$</expression>
+	</RegExp>
+	<RegExp id="D" input="$$8" output="\1" dest="6">
+		<expression>&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;/div&gt;</expression>
+	</RegExp>
+	<expression>(.+)</expression>
+</RegExp>
+```
+
 
 Extraktion der Darsteller  
 Die Darsteller werden auf der filmdiest.de-Seite so aufgelistet:  
-		<dt>Darsteller</dt>
-		<dd>
-			<span class="credit ">
-				<a href="/person/filme/241391">
-					Lily Franky (Osamu Shibata)
-				</a> 
-			</span>
-			<span class="credit ">
-				&#183;
-				<a href="/person/filme/230534">
-					Sakura Ando (Nobuyo Shibata)
-				</a> 
-			</span>
-		</dd>
+```
+<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
+	<RegExp id="A" input="$$1" output="\1" dest="7">
+		<expression clear="yes">&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;div class=&quot;critique-button&quot;&gt;.*?&lt;a class=&quot;btn btn-lg btn-default text-uppercase&quot; href=&quot;#kritik&quot;&gt;.*?Zur Langkritik.*?&lt;/a&gt;.*?&lt;/div&gt;</expression>
+	</RegExp>
+	<RegExp id="B" input="$$7" output="\1" dest="6">
+		<expression>(.+)</expression>
+	</RegExp>
+	<RegExp id="C" input="$$7" output="$$1" dest="8">
+		<expression>^$</expression>
+	</RegExp>
+	<RegExp id="D" input="$$8" output="\1" dest="6">
+		<expression>&lt;div class=&quot;col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-0 col-md-8&quot;&gt;(.*?)&lt;/div&gt;</expression>
+	</RegExp>
+	<expression>(.+)</expression>
+</RegExp>
+```
+
 
 Sie können mit folgenden Regex leicht extrahiert werden. Zunächst matcht der Regex A auf das umschließende `<dt>Darsteller</dt>.*?<dd>(.*?)</dd>` und gibt den Inhalt zwischen `<dd>` und `</dd>` an den Regex B weiter. Der matcht auf einen einzelnen span-Block und erzeugt die entsprechende Ausgabe. Aufgrund der Option repeat=yes ruft Kodi ihn wiederholt auf, solange es noch unbearbeitete span-Blöcke gibt.
-    <RegExp id="A" input="$$1" output="\1" dest="10">
-        	<expression noclean="1">&lt;dt&gt;Darsteller&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
-    </RegExp>
-    <RegExp id="B" input="$$10" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
-        	<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/filme/[0-9]+&quot;&gt;(.*?)\((.*?)\).*?&lt;/a&gt;.*?&lt;/span&gt;</expression>
-    </RegExp>
+```
+<RegExp id="A" input="$$1" output="\1" dest="10">
+	<expression noclean="1">&lt;dt&gt;Darsteller&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+</RegExp>
+<RegExp id="B" input="$$10" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
+	<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/filme/[0-9]+&quot;&gt;(.*?)\((.*?)\).*?&lt;/a&gt;.*?&lt;/span&gt;</expression>
+</RegExp>
+```
+
