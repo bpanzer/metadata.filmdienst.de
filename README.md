@@ -78,9 +78,9 @@ Die Darsteller werden auf der filmdiest.de-Seite so aufgelistet:
 		</dd>
 
 Sie können mit folgenden Regex leicht extrahiert werden. Zunächst matcht der Regex A auf das umschließende `<dt>Darsteller</dt>.*?<dd>(.*?)</dd>` und gibt den Inhalt zwischen `<dd>` und `</dd>` an den Regex B weiter. Der matcht auf einen einzelnen span-Block und erzeugt die entsprechende Ausgabe. Aufgrund der Option repeat=yes ruft Kodi ihn wiederholt auf, solange es noch unbearbeitete span-Blöcke gibt.
-		<RegExp id="A" input="$$1" output="\1" dest="10">
-			<expression noclean="1">&lt;dt&gt;Darsteller&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
-		</RegExp>
-		<RegExp id="B" input="$$10" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
-			<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/filme/[0-9]+&quot;&gt;(.*?)\((.*?)\).*?&lt;/a&gt;.*?&lt;/span&gt;</expression>
-		</RegExp>
+    <RegExp id="A" input="$$1" output="\1" dest="10">
+        	<expression noclean="1">&lt;dt&gt;Darsteller&lt;/dt&gt;.*?&lt;dd&gt;(.*?)&lt;/dd&gt;</expression>
+    </RegExp>
+    <RegExp id="B" input="$$10" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt;" dest="5+">
+        	<expression repeat="yes" noclean="1" trim="1">&lt;span class=&quot;credit.*?&lt;a href=&quot;/person/filme/[0-9]+&quot;&gt;(.*?)\((.*?)\).*?&lt;/a&gt;.*?&lt;/span&gt;</expression>
+    </RegExp>
