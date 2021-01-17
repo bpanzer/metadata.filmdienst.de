@@ -3,22 +3,22 @@
 Kodi-Plug-in zum Holen der Filmdaten von Filmdienste.de.
 Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt, verteilt und verändert werden. 
 -->
-<scraper framework="1.1" date="2019-02-09">
+<scraper framework="1.1" date="2021-01-17">
 	<NfoUrl>
 		<RegExp input="$$1" output="&lt;details&gt;&lt;url&gt;&lt;/url&gt;&lt;id&gt;&lt;/id&gt;&lt;/details&gt;" dest="3">
 			<expression/><!-- missing! -->
 		</RegExp>
 	</NfoUrl>
 	<!-- Filmdienst-URL sieht so aus: 
-	https://www.filmdienst.de/suche/filme?searchText=angels%20share&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False 
+	https://www.filmdienst.de/suche/filme?searchText=Die%20N%C3%A4chte%20der%20Cabiria&movieFormat=1&rating=0&order=0&isFilterExpanded=False&page=1
 	mit Jahr:
-	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=1954&yearTo=1954&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False
+	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=1954&yearTo=1954&movieFormat=1&rating=0&order=NewFirst&isFilterExpanded=False
 	aber das Jahr darf auch leer sein:
-	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=&yearTo=&movieFormat=All&rating=0&order=NewFirst&isFilterExpanded=False
+	http://www.filmdienst.de/suche/filme?searchText=Das%20fliegende%20Klassenzimmer&yearFrom=&yearTo=&movieFormat=1&rating=0&order=NewFirst&isFilterExpanded=False
 	-->
 	<!--  dest="3" ist sowohl an CreateSearchUrl als auch an RegExp nötig! -->
 	<CreateSearchUrl dest="3">
-		<RegExp input="$$6" output="&lt;url&gt;http://www.filmdienst.de/suche/filme?searchText=\1&amp;yearFrom=$$2&amp;yearTo=$$2&amp;movieFormat=All&amp;rating=0&amp;order=NewFirst&amp;isFilterExpanded=False&lt;/url&gt;" dest="3">
+		<RegExp input="$$6" output="&lt;url&gt;http://www.filmdienst.de/suche/filme?searchText=\1&amp;yearFrom=$$2&amp;yearTo=$$2&amp;movieFormat=1&amp;rating=0&amp;order=NewFirst&amp;isFilterExpanded=False&lt;/url&gt;" dest="3">
 			<RegExp input="$$1" output="\1" dest="7">
 				<expression clear="yes">(.*?)\[.*?</expression>
 			</RegExp>
@@ -35,11 +35,18 @@ Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt
 		</RegExp>
 	</CreateSearchUrl>
 	<!-- dies zerlegt das Ergebnis in einzelne Treffer, also Filme -->
-	<!-- Filmdienst-URL ist so: https://www.filmdienst.de/film/details/540431/was-hier-steht-ist-auch-egal -->
+	<!-- auf der Ergebnisseite gibt es genau eine <section class="row component movie-list clear-sm-2 clear-md-2 clear-lg-3"> ... </section> -->
+	<!-- innerhalb dieser section gibt es für jeden Film einen <article class="col-sm-6 col-lg-4 column element"> <a href="/film/details/62920/der-mann-ohne-vergangenheit-196870"> </a> ... </article>-->
+	<!-- die Filmdienst-URL ist so: https://www.filmdienst.de/film/details/540431/was-hier-steht-ist-auch-egal -->
+	<!-- diese URLs müssen in so ein Element für jeden Film eingefügt werden: <entity><title>Filmtitel von Regiseur</title><id>...</id><year>...</year><url>...</url></entity> -->
+	<!-- und diese Elemente müssen von <results>...</results> umschlossen werden --> 
 	<GetSearchResults dest="8">
 		<RegExp input="$$3" output="&lt;results&gt;\1&lt;/results&gt;" dest="8">
-			<RegExp input="$$1" output="&lt;entity&gt;&lt;title&gt;\3 von \5&lt;/title&gt;&lt;id&gt;\1&lt;/id&gt;&lt;year&gt;\4&lt;/year&gt;&lt;url&gt;http://www.filmdienst.de/film/details/\1/&lt;/url&gt;&lt;/entity&gt;" dest="3">
-				<expression repeat="yes" noclean="1">&lt;article class=&quot;col-sm-4 column element&quot;&gt;.*?&lt;h3 class=&quot;h4 header&quot;&gt;.*?&lt;a href=&quot;/film/details/([0-9]+)/([a-z\-0-9]+)&quot;&gt;(.*?)&lt;/a&gt;.*? ([1-2][0-9][0-9][0-9]).*? R: (.*?) &lt;br /&gt;</expression>
+			<RegExp input="$$1" output="\1" dest="4">
+				<expression noclean="1">&lt;section class=&quot;row component movie-list clear-sm-2 clear-md-2 clear-lg-3&quot;&gt;(.*?)&lt;/section&gt;</expression>
+			</RegExp>
+			<RegExp input="$$4" output="&lt;entity&gt;&lt;title&gt;\4 von \6&lt;/title&gt;&lt;id&gt;\1&lt;/id&gt;&lt;year&gt;\5&lt;/year&gt;&lt;url&gt;http://www.filmdienst.de/film/details/\1/\2&lt;/url&gt;&lt;/entity&gt;" dest="3">
+				<expression noclean="1">&lt;article class=&quot;col-sm-6 col-lg-4 column element&quot;&gt;.*?&lt;a href=&quot;/film/details/([0-9]+)/([a-z\-0-9]+)&quot;&gt;(.*?)&lt;/a&gt;.*?title=&quot;(.*?)&quot;.*? ([1-2][0-9][0-9][0-9]).*? &lt;br /&gt;.*?R: (.*?) &lt;br /&gt;</expression>
 			</RegExp>
 			<expression noclean="1" />
 		</RegExp>
@@ -54,20 +61,22 @@ Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt
 	-->
 	<GetDetails dest="3">
 		<RegExp input="$$5" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+			<!-- 
 			<RegExp input="$$1" output="&lt;title&gt;\1&lt;/title&gt;&lt;director&gt;\2&lt;/director&gt;" dest="5">
 				<expression noclean="1">&lt;h1 class=&quot;text-serif&quot;&gt;(.*?)&lt;/h1&gt;.*&lt;p&gt;Regie: (.*?)&lt;/p&gt;</expression>
 			</RegExp>
+			-->
 			<RegExp input="$$1" output="&lt;id&gt;\1&lt;/id&gt;" dest="5+">
 				<expression noclean="1">&lt;meta property=&quot;og:url&quot; content=&quot;https://www.filmdienst.de/film/details/([0-9]+)/.*?&quot; /&gt;</expression>
 			</RegExp>
-			<RegExp input="$$1" output="&lt;title2&gt;\1&lt;/title2&gt;" dest="5+">
-				<expression noclean="1">&lt;h1 class=&quot;text-serif&quot;&gt;(.*)&lt;/h1&gt;</expression>
+			<RegExp input="$$1" output="&lt;title&gt;\1&lt;/title&gt;" dest="5+">
+				<expression noclean="1">&lt;h1&gt;(.*?)&lt;/h1&gt;</expression>
 			</RegExp>
-			<RegExp input="$$1" output="&lt;director2&gt;\1&lt;/director2&gt;" dest="5+">
+			<RegExp input="$$1" output="&lt;director&gt;\1&lt;/director&gt;" dest="5+">
 				<expression noclean="1">&lt;p&gt;Regie: (.*?)&lt;</expression>
 			</RegExp>
-			<RegExp input="$$1" output="&lt;director3&gt;\2&lt;/director3&gt;" dest="5+">
-				<expression noclean="1">&lt;dt&gt;Regie&lt;/dt&gt;.*?&lt;dd&gt;.*?&lt;span class=&quot;credit &quot;&gt;.*?&lt;a href=&quot;/person/filme/([0-9]+)&quot;&gt;(.*?)&lt;/a&gt;</expression>
+			<RegExp input="$$1" output="&lt;director2&gt;\3&lt;/director2&gt;" dest="5+">
+				<expression noclean="1">&lt;dt&gt;Regie&lt;/dt&gt;.*?&lt;dd&gt;.*?&lt;span class=&quot;credit &quot;&gt;.*?&lt;a href=&quot;/person/details/([0-9]+)/([a-z\-]+)&quot;&gt;(.*?)&lt;/a&gt;</expression>
 			</RegExp>
 			<RegExp input="$$6" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
 				<RegExp input="$$1" output="\1" dest="7">
