@@ -3,7 +3,7 @@
 Kodi-Plug-in zum Holen der Filmdaten von Filmdienste.de.
 Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt, verteilt und verändert werden. 
 -->
-<scraper framework="1.1" date="2021-01-17">
+<scraper framework="1.1" date="2024-10-06">
 	<NfoUrl>
 		<RegExp input="$$1" output="&lt;details&gt;&lt;url&gt;&lt;/url&gt;&lt;id&gt;&lt;/id&gt;&lt;/details&gt;" dest="3">
 			<expression/><!-- missing! -->
@@ -46,7 +46,7 @@ Das Plug-in steht unter der GPLv3. Es darf im Einklang mit dieser Lizenz genutzt
 				<expression noclean="1">&lt;section class=&quot;row component movie-list clear-sm-2 clear-md-2 clear-lg-3&quot;&gt;(.*?)&lt;/section&gt;</expression>
 			</RegExp>
 			<RegExp input="$$4" output="&lt;entity&gt;&lt;title&gt;\4 von \6&lt;/title&gt;&lt;id&gt;\1&lt;/id&gt;&lt;year&gt;\5&lt;/year&gt;&lt;url&gt;http://www.filmdienst.de/film/details/\1/\2&lt;/url&gt;&lt;/entity&gt;" dest="3">
-				<expression noclean="1">&lt;article class=&quot;col-sm-6 col-lg-4 column element&quot;&gt;.*?&lt;a href=&quot;/film/details/([0-9]+)/([a-z\-0-9]+)&quot;&gt;(.*?)&lt;/a&gt;.*?title=&quot;(.*?)&quot;.*? ([1-2][0-9][0-9][0-9]).*? &lt;br /&gt;.*?R: (.*?) &lt;br /&gt;</expression>
+				<expression noclean="1">&lt;article class=&quot;col-sm-6 col-lg-4 column element&quot;&gt;.*?&lt;a href=&quot;/film/details/([0-9]+)/([a-z\-0-9]+)&quot;&gt;(.*?)&lt;/a&gt;.*?title=&quot;(.*?)&quot;.*?&lt;li&gt;.*? ([1-2][0-9][0-9][0-9]) &lt;/li&gt;.*?&lt;li&gt; R: (.*?) &lt;/li&gt;.*?</expression>
 			</RegExp>
 			<expression noclean="1" />
 		</RegExp>
